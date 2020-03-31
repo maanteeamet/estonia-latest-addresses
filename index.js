@@ -7,7 +7,6 @@ const request = require("request");
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
-var url = "https://xgis.maaamet.ee/adsavalik/valjav6te/";
 
 function getNow() {
   return new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
@@ -15,15 +14,15 @@ function getNow() {
 // App
 const app = express();
 app.get('/', (req, res) => {
-  var item;
+  var url = "https://xgis.maaamet.ee/adsavalik/valjav6te/";
   console.log(getNow() + ' - Sending request to ' + url);
-  request({url: url, json: true}, function (error, response, body) {
+  request(url, function (error, response, body) {
     if (error) {
       return console.error(getNow() + ' - Failed, error: ' + error);
     }
     if (response) console.log(getNow() + ' - Got response from ' + url + ', response: ' + response.statusCode);
     if (body) {
-      item = body.filter(function(i){return i.vvnr == 1 && !("kov" in i);});
+      let item = JSON.parse(body).filter(function(i){return i.vvnr == 1 && !("kov" in i);});
       url = url + item[0].fail;
       res.set({
         'Content-Type': 'application/zip'
